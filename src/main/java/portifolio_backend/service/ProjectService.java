@@ -35,7 +35,7 @@ public class ProjectService {
         project.setGithubUrl(projectDetails.getGithubUrl());
         project.setTechnologies(projectDetails.getTechnologies());
         return projectRepository.save(project);
-        
+
 
 
     }
