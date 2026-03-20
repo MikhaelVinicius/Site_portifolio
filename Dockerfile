@@ -6,8 +6,8 @@ COPY src ./src
 # Compila o projeto ignorando os testes para ser mais rápido
 RUN mvn clean package -DskipTests
 
-# Etapa 2: Execução (Run) usando uma versão mais leve do Java
-FROM openjdk:17-jdk-slim
+# Etapa 2: Execução (Run) usando Eclipse Temurin (substituto atualizado do OpenJDK)
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 # Copia o ficheiro .jar gerado na etapa anterior
 COPY --from=build /app/target/portifolio-backend-0.0.1-SNAPSHOT.jar app.jar
