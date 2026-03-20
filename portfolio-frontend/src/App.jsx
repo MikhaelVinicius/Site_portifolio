@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock } from 'lucide-react';
 import './App.css';
 
-const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
+const API_URL = 'https://site-portifolio-2ah7.onrender.com';
 
 function App() {
   const [projects, setProjects] = useState([]);
