@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Github, ExternalLink, Code2, PlusCircle, Trash2 } from 'lucide-react';
-import './App.css'; // Importando o CSS tradicional
+import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock } from 'lucide-react';
+import './App.css';
 
 const API_URL = 'http://localhost:8080/api/projects'; 
 
@@ -10,7 +10,13 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
 
-  // Mantive a grafia "discription" igual ao seu backend em Java
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [pendingAction, setPendingAction] = useState(null);
+
   const [formData, setFormData] = useState({
     title: '',
     discription: '',
@@ -34,6 +40,40 @@ function App() {
   useEffect(() => {
     fetchProjects();
   }, []);
+
+  const requireAuth = (action) => {
+    if (isAuthenticated) {
+      action();
+    } else {
+      setPendingAction(() => action); 
+      setAuthError('');
+      setPasswordInput('');
+      setAuthModalOpen(true); 
+    }
+  };
+
+  
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    
+    
+    if (passwordInput === 'soel2024') {
+      setIsAuthenticated(true);
+      setAuthModalOpen(false);
+      if (pendingAction) {
+        pendingAction(); // 
+        setPendingAction(null);
+      }
+    } else {
+      setAuthError('Senha incorreta! Acesso negado.');
+    }
+  };
+
+  const closeAuthModal = () => {
+    setAuthModalOpen(false);
+    setPendingAction(null);
+  };
+  // -----------------------------
 
   const handleDelete = async (id) => {
     if(window.confirm('Tem certeza que deseja excluir este projeto?')) {
@@ -64,10 +104,46 @@ function App() {
 
   return (
     <div className="app-wrapper">
+      {/*  */}
+      {authModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-icon">
+              <Lock size={32} />
+            </div>
+            <h3>Acesso Restrito</h3>
+            <p>Por favor, insira a senha para continuar.</p>
+            
+            <form onSubmit={handlePasswordSubmit}>
+              <input 
+                type="password" 
+                className="form-input" 
+                placeholder="Digite a senha..." 
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                autoFocus
+              />
+              {authError && <span className="error-text">{authError}</span>}
+              
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={closeAuthModal}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-primary btn-submit">
+                  Desbloquear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* ------------------------------ */}
+
       <nav className="navbar">
         <div className="navbar-content">
           <h1>Meu Portfólio</h1>
-          <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
+          {/* */}
+          <button className="btn-primary" onClick={() => requireAuth(() => setShowForm(!showForm))}>
             <PlusCircle size={18} />
             {showForm ? 'Fechar Formulário' : 'Novo Projeto'}
           </button>
@@ -110,7 +186,8 @@ function App() {
               <div key={project.id} className="project-card">
                 <div className="project-image-wrapper">
                   <img src={project.imageURL || 'https://via.placeholder.com/400x250'} alt={project.title} />
-                  <button onClick={() => handleDelete(project.id)} className="btn-delete" title="Excluir">
+                  {/**/}
+                  <button onClick={() => requireAuth(() => handleDelete(project.id))} className="btn-delete" title="Excluir">
                     <Trash2 size={16} />
                   </button>
                 </div>
