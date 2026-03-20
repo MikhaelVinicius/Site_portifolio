@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/projects")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "https://site-portifolio-front.vercel.app")
 public class ProjectController {
 
     @Autowired
