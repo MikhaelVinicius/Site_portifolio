@@ -1,4 +1,4 @@
-/* Importando uma fonte moderna do Google Fonts */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
@@ -7,7 +7,7 @@
   --bg-input: #0f172a;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --primary: #06b6d4; /* Cyan */
+  --primary: #06b6d4; 
   --primary-hover: #0891b2;
   --danger: #ef4444;
   --danger-hover: #dc2626;
@@ -28,7 +28,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Navbar */
 .navbar {
   background-color: rgba(15, 23, 42, 0.8);
   backdrop-filter: blur(10px);
@@ -71,14 +70,13 @@ body {
   background-color: var(--primary-hover);
 }
 
-/* Layout Principal */
+
 .main-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 3rem 1.5rem;
 }
 
-/* Formulário */
 .form-container {
   background-color: var(--bg-card);
   padding: 2rem;
@@ -149,7 +147,7 @@ body {
   }
 }
 
-/* Card de Projeto */
+
 .project-card {
   background-color: var(--bg-card);
   border-radius: 12px;
@@ -266,7 +264,7 @@ body {
   color: var(--primary);
 }
 
-/* Estados (Loading e Vazio) */
+
 .loading-state, .empty-state {
   text-align: center;
   padding: 4rem 0;
@@ -274,9 +272,6 @@ body {
 }
 
 
-/* =========================================
-   Modal de Senha (Pop-up)
-   ========================================= */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -372,4 +367,43 @@ body {
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+
+.spinner {
+  animation: spin 1.5s linear infinite;
+  color: #a855f7; 
+  display: block;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-title {
+  font-size: 1.3rem;
+  margin-top: 1.5rem;
+  color: #f8fafc; 
+  font-weight: 600;
+}
+
+.loading-warning {
+  margin: 1.5rem auto 0;
+  padding: 1rem;
+  max-width: 500px;
+  background-color: rgba(239, 68, 68, 0.05); 
+  border-left: 4px solid #ef4444; 
+  border-radius: 6px;
+  text-align: left;
+}
+
+.loading-warning p {
+  color: #fca5a5; 
+  font-size: 0.95rem;
+  margin-bottom: 0.3rem;
+  line-height: 1.4;
 }

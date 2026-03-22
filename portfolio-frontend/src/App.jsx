@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock } from 'lucide-react';
+import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2 } from 'lucide-react';
 import './App.css';
 
 const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
@@ -9,7 +9,6 @@ function App() {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -52,16 +51,14 @@ function App() {
     }
   };
 
-  
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    
     
     if (passwordInput === 'soel2024') {
       setIsAuthenticated(true);
       setAuthModalOpen(false);
       if (pendingAction) {
-        pendingAction(); // 
+        pendingAction(); 
         setPendingAction(null);
       }
     } else {
@@ -73,7 +70,6 @@ function App() {
     setAuthModalOpen(false);
     setPendingAction(null);
   };
-  // -----------------------------
 
   const handleDelete = async (id) => {
     if(window.confirm('Tem certeza que deseja excluir este projeto?')) {
@@ -104,7 +100,7 @@ function App() {
 
   return (
     <div className="app-wrapper">
-      {/*  */}
+      {/* Modal de Autenticação */}
       {authModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -137,12 +133,10 @@ function App() {
           </div>
         </div>
       )}
-      {/* ------------------------------ */}
 
       <nav className="navbar">
         <div className="navbar-content">
           <h1>Meu Portfólio</h1>
-          {/* */}
           <button className="btn-primary" onClick={() => requireAuth(() => setShowForm(!showForm))}>
             <PlusCircle size={18} />
             {showForm ? 'Fechar Formulário' : 'Novo Projeto'}
@@ -170,9 +164,15 @@ function App() {
           </div>
         )}
 
+        {/* Loading Dinâmico com Aviso Implementado Aqui */}
         {loading ? (
-          <div className="loading-state">
-            <p>Carregando projetos...</p>
+          <div className="loading-state" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+             <Loader2 className="spinner" size={48} />
+             <p className="loading-title">Buscando projetos...</p>
+             <div className="loading-warning">
+                <p><strong>Aviso:</strong> O servidor backend pode estar "dormindo".</p>
+                <p>O primeiro carregamento pode demorar até 1 minuto para despertar. Obrigado pela paciência!</p>
+             </div>
           </div>
         ) : projects.length === 0 ? (
           <div className="empty-state">
@@ -186,7 +186,6 @@ function App() {
               <div key={project.id} className="project-card">
                 <div className="project-image-wrapper">
                   <img src={project.imageURL || 'https://via.placeholder.com/400x250'} alt={project.title} />
-                  {/**/}
                   <button onClick={() => requireAuth(() => handleDelete(project.id))} className="btn-delete" title="Excluir">
                     <Trash2 size={16} />
                   </button>
