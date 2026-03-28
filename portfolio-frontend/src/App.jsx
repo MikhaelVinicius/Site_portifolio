@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2 } from 'lucide-react';
+import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2, Mail } from 'lucide-react';
 import './App.css';
 
 const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
@@ -145,6 +145,19 @@ function App() {
       </nav>
 
       <main className="main-container">
+        {/* Nova secção de Perfil */}
+        <div className="profile-header">
+          <h1>Mikhael Soel</h1>
+          <div className="profile-links">
+            <a href="mailto:mikhaelvini@gmail.com" className="profile-link">
+              <Mail size={18} /> mikhaelvini@gmail.com
+            </a>
+            <a href="https://github.com/MikhaelVinicius" target="_blank" rel="noopener noreferrer" className="profile-link">
+              <Github size={18} /> GitHub
+            </a>
+          </div>
+        </div>
+
         {showForm && (
           <div className="form-container">
             <h2>Adicionar Novo Projeto</h2>
