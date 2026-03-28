@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2, Mail } from 'lucide-react';
+import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2, Mail, Star } from 'lucide-react';
 import './App.css';
 
 const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
@@ -22,7 +22,8 @@ function App() {
     imageURL: '',
     projectUrl: '',
     githubUrl: '',
-    technologies: ''
+    technologies: '',
+    destaque: false // Adicionado estado inicial
   });
 
   const fetchProjects = async () => {
@@ -53,7 +54,6 @@ function App() {
 
   const handlePasswordSubmit = (e) => {
     e.preventDefault();
-    
     if (passwordInput === 'soel2024') {
       setIsAuthenticated(true);
       setAuthModalOpen(false);
@@ -82,11 +82,22 @@ function App() {
     }
   };
 
+  // NOVA FUNÇÃO: Alternar Destaque
+  const handleToggleDestaque = async (project) => {
+    try {
+      const updatedProject = { ...project, destaque: !project.destaque };
+      await axios.put(`${API_URL}/${project.id}`, updatedProject);
+      fetchProjects(); // Recarrega a lista para mostrar a mudança
+    } catch (error) {
+      console.error("Erro ao atualizar destaque:", error);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post(API_URL, formData);
-      setFormData({ title: '', discription: '', imageURL: '', projectUrl: '', githubUrl: '', technologies: '' });
+      setFormData({ title: '', discription: '', imageURL: '', projectUrl: '', githubUrl: '', technologies: '', destaque: false });
       setShowForm(false);
       fetchProjects();
     } catch (error) {
@@ -98,36 +109,72 @@ function App() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // SEPARANDO OS PROJETOS
+  const projetosDestaque = projects.filter(p => p.destaque === true);
+  const outrosProjetos = projects.filter(p => p.destaque !== true);
+
+  // Função auxiliar para renderizar um card de projeto
+  const renderProjectCard = (project) => (
+    <div key={project.id} className="project-card">
+      <div className="project-image-wrapper">
+        <img src={project.imageURL || 'https://via.placeholder.com/400x250'} alt={project.title} />
+        
+        {/* Botões de Ação do Admin */}
+        <div className="admin-actions">
+          <button 
+            onClick={() => requireAuth(() => handleToggleDestaque(project))} 
+            className={`btn-action ${project.destaque ? 'btn-star-active' : 'btn-star'}`}
+            title={project.destaque ? "Remover dos Destaques" : "Adicionar aos Destaques"}
+          >
+            <Star size={16} fill={project.destaque ? "#f59e0b" : "none"} color={project.destaque ? "#f59e0b" : "currentColor"} />
+          </button>
+          
+          <button onClick={() => requireAuth(() => handleDelete(project.id))} className="btn-action btn-delete" title="Excluir">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      <div className="project-content">
+        <h3 className="project-title">{project.title}</h3>
+        <p className="project-description">{project.discription}</p>
+        
+        <div className="tech-badges">
+          {project.technologies && project.technologies.split(',').map((tech, index) => (
+            <span key={index} className="tech-badge">{tech.trim()}</span>
+          ))}
+        </div>
+
+        <div className="project-links">
+          {project.githubUrl && (
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link">
+              <Github size={18} /> Código
+            </a>
+          )}
+          {project.projectUrl && (
+            <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="project-link">
+              <ExternalLink size={18} /> Acessar
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="app-wrapper">
-      {/* Modal de Autenticação */}
       {authModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <div className="modal-icon">
-              <Lock size={32} />
-            </div>
+            <div className="modal-icon"><Lock size={32} /></div>
             <h3>Acesso Restrito</h3>
             <p>Por favor, insira a senha para continuar.</p>
-            
             <form onSubmit={handlePasswordSubmit}>
-              <input 
-                type="password" 
-                className="form-input" 
-                placeholder="Digite a senha..." 
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                autoFocus
-              />
+              <input type="password" className="form-input" placeholder="Digite a senha..." value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} autoFocus />
               {authError && <span className="error-text">{authError}</span>}
-              
               <div className="modal-actions">
-                <button type="button" className="btn-cancel" onClick={closeAuthModal}>
-                  Cancelar
-                </button>
-                <button type="submit" className="btn-primary btn-submit">
-                  Desbloquear
-                </button>
+                <button type="button" className="btn-cancel" onClick={closeAuthModal}>Cancelar</button>
+                <button type="submit" className="btn-primary btn-submit">Desbloquear</button>
               </div>
             </form>
           </div>
@@ -145,7 +192,7 @@ function App() {
       </nav>
 
       <main className="main-container">
-        {/* Nova secção de Perfil */}
+        {/* Cabeçalho de Perfil */}
         <div className="profile-header">
           <h1>Mikhael Soel</h1>
           <div className="profile-links">
@@ -169,6 +216,12 @@ function App() {
                 <input type="text" name="githubUrl" value={formData.githubUrl} onChange={handleChange} placeholder="URL do Repositório (GitHub)" className="form-input" required />
                 <input type="text" name="technologies" value={formData.technologies} onChange={handleChange} placeholder="Tecnologias (ex: React, Java, Spring)" className="form-input full-width" required />
                 <textarea name="discription" value={formData.discription} onChange={handleChange} placeholder="Descrição do Projeto" rows="4" className="form-input full-width" required />
+                
+                {/* Checkbox para criar projeto já como destaque (opcional) */}
+                <div className="form-input full-width" style={{display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent', border: 'none'}}>
+                  <input type="checkbox" id="destaque" name="destaque" checked={formData.destaque} onChange={(e) => setFormData({...formData, destaque: e.target.checked})} style={{width: 'auto'}}/>
+                  <label htmlFor="destaque" style={{color: 'var(--text-main)', cursor: 'pointer'}}>Marcar como Destaque</label>
+                </div>
               </div>
               <div className="form-actions">
                 <button type="submit" className="btn-primary">Salvar Projeto</button>
@@ -177,7 +230,6 @@ function App() {
           </div>
         )}
 
-        {/* Loading Dinâmico com Aviso Implementado Aqui */}
         {loading ? (
           <div className="loading-state" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
              <Loader2 className="spinner" size={48} />
@@ -194,43 +246,32 @@ function App() {
             <p style={{ marginTop: '0.5rem' }}>Adicione seu primeiro projeto acima!</p>
           </div>
         ) : (
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <div key={project.id} className="project-card">
-                <div className="project-image-wrapper">
-                  <img src={project.imageURL || 'https://via.placeholder.com/400x250'} alt={project.title} />
-                  <button onClick={() => requireAuth(() => handleDelete(project.id))} className="btn-delete" title="Excluir">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-
-                <div className="project-content">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-description">{project.discription}</p>
-                  
-                  <div className="tech-badges">
-                    {project.technologies && project.technologies.split(',').map((tech, index) => (
-                      <span key={index} className="tech-badge">
-                        {tech.trim()}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="project-links">
-                    {project.githubUrl && (
-                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="project-link">
-                        <Github size={18} /> Código
-                      </a>
-                    )}
-                    {project.projectUrl && (
-                      <a href={project.projectUrl} target="_blank" rel="noopener noreferrer" className="project-link">
-                        <ExternalLink size={18} /> Acessar
-                      </a>
-                    )}
-                  </div>
+          <div className="portfolio-content">
+            
+            {/* SEÇÃO DE DESTAQUES */}
+            {projetosDestaque.length > 0 && (
+              <div className="section-destaques" style={{ marginBottom: '4rem' }}>
+                <h2 style={{ color: 'var(--primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Star fill="#f59e0b" color="#f59e0b" /> Projetos em Destaque
+                </h2>
+                <div className="projects-grid">
+                  {projetosDestaque.map(renderProjectCard)}
                 </div>
               </div>
-            ))}
+            )}
+
+            {/* SEÇÃO DE OUTROS PROJETOS */}
+            {outrosProjetos.length > 0 && (
+              <div className="section-outros">
+                <h2 style={{ color: 'var(--text-main)', marginBottom: '1.5rem' }}>
+                  {projetosDestaque.length > 0 ? 'Outros Projetos' : 'Todos os Projetos'}
+                </h2>
+                <div className="projects-grid">
+                  {outrosProjetos.map(renderProjectCard)}
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </main>

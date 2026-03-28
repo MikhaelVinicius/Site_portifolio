@@ -8,7 +8,6 @@ import portifolio_backend.model.Project;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class ProjectService {
 
@@ -34,10 +33,14 @@ public class ProjectService {
         project.setImageURL(projectDetails.getImageURL());
         project.setGithubUrl(projectDetails.getGithubUrl());
         project.setTechnologies(projectDetails.getTechnologies());
+        
+        // CORREÇÃO: Atualizando a URL de deploy (estava faltando)
+        project.setProjectUrl(projectDetails.getProjectUrl()); 
+        
+        // NOVO CAMPO: Atualizando o status de destaque
+        project.setDestaque(projectDetails.isDestaque()); 
+        
         return projectRepository.save(project);
-
-
-
     }
 
     public void deleteProject(Long id){

@@ -24,6 +24,8 @@ public class Project {
     private String githubUrl;
     private String technologies;
 
+    private boolean destaque;
+
 
 
 }
