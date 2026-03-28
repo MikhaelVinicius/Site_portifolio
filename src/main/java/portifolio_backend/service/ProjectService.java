@@ -23,6 +23,10 @@ public class ProjectService {
     }
 
     public Project createProject(Project project){
+        // Garante que novos projetos que vierem sem destaque virem false em vez de nulo
+        if (project.getDestaque() == null) {
+            project.setDestaque(false);
+        }
         return projectRepository.save(project);
     }
 
@@ -33,12 +37,10 @@ public class ProjectService {
         project.setImageURL(projectDetails.getImageURL());
         project.setGithubUrl(projectDetails.getGithubUrl());
         project.setTechnologies(projectDetails.getTechnologies());
-        
-        // CORREÇÃO: Atualizando a URL de deploy (estava faltando)
         project.setProjectUrl(projectDetails.getProjectUrl()); 
         
-        // NOVO CAMPO: Atualizando o status de destaque
-        project.setDestaque(projectDetails.isDestaque()); 
+        // CORREÇÃO: Usa getDestaque() e trata para evitar erros nulos
+        project.setDestaque(projectDetails.getDestaque() != null ? projectDetails.getDestaque() : false); 
         
         return projectRepository.save(project);
     }

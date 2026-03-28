@@ -5,14 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-
 @Entity
 @Table(name="projects")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Project {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +21,6 @@ public class Project {
     private String projectUrl;
     private String githubUrl;
     private String technologies;
-
-    private boolean destaque;
-
-
-
+    
+    private Boolean destaque; 
 }
