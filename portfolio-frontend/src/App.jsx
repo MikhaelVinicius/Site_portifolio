@@ -23,7 +23,7 @@ function App() {
     projectUrl: '',
     githubUrl: '',
     technologies: '',
-    destaque: false // Adicionado estado inicial
+    destaque: false
   });
 
   const fetchProjects = async () => {
@@ -82,12 +82,11 @@ function App() {
     }
   };
 
-  // NOVA FUNÇÃO: Alternar Destaque
   const handleToggleDestaque = async (project) => {
     try {
       const updatedProject = { ...project, destaque: !project.destaque };
       await axios.put(`${API_URL}/${project.id}`, updatedProject);
-      fetchProjects(); // Recarrega a lista para mostrar a mudança
+      fetchProjects(); 
     } catch (error) {
       console.error("Erro ao atualizar destaque:", error);
     }
@@ -109,30 +108,32 @@ function App() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // SEPARANDO OS PROJETOS
+  // Separa os projetos
   const projetosDestaque = projects.filter(p => p.destaque === true);
   const outrosProjetos = projects.filter(p => p.destaque !== true);
 
-  // Função auxiliar para renderizar um card de projeto
+  // Renderiza o card
   const renderProjectCard = (project) => (
     <div key={project.id} className="project-card">
       <div className="project-image-wrapper">
         <img src={project.imageURL || 'https://via.placeholder.com/400x250'} alt={project.title} />
         
-        {/* Botões de Ação do Admin */}
-        <div className="admin-actions">
-          <button 
-            onClick={() => requireAuth(() => handleToggleDestaque(project))} 
-            className={`btn-action ${project.destaque ? 'btn-star-active' : 'btn-star'}`}
-            title={project.destaque ? "Remover dos Destaques" : "Adicionar aos Destaques"}
-          >
-            <Star size={16} fill={project.destaque ? "#f59e0b" : "none"} color={project.destaque ? "#f59e0b" : "currentColor"} />
-          </button>
-          
-          <button onClick={() => requireAuth(() => handleDelete(project.id))} className="btn-action btn-delete" title="Excluir">
-            <Trash2 size={16} />
-          </button>
-        </div>
+        {/* BOTÕES DE ADMIN: Só aparecem se o usuário estiver logado */}
+        {isAuthenticated && (
+          <div className="admin-actions">
+            <button 
+              onClick={() => handleToggleDestaque(project)} 
+              className={`btn-action ${project.destaque ? 'btn-star-active' : 'btn-star'}`}
+              title={project.destaque ? "Remover dos Destaques" : "Adicionar aos Destaques"}
+            >
+              <Star size={16} fill={project.destaque ? "#f59e0b" : "none"} color={project.destaque ? "#f59e0b" : "currentColor"} />
+            </button>
+            
+            <button onClick={() => handleDelete(project.id)} className="btn-action btn-delete" title="Excluir">
+              <Trash2 size={16} />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="project-content">
@@ -217,7 +218,6 @@ function App() {
                 <input type="text" name="technologies" value={formData.technologies} onChange={handleChange} placeholder="Tecnologias (ex: React, Java, Spring)" className="form-input full-width" required />
                 <textarea name="discription" value={formData.discription} onChange={handleChange} placeholder="Descrição do Projeto" rows="4" className="form-input full-width" required />
                 
-                {/* Checkbox para criar projeto já como destaque (opcional) */}
                 <div className="form-input full-width" style={{display: 'flex', alignItems: 'center', gap: '10px', background: 'transparent', border: 'none'}}>
                   <input type="checkbox" id="destaque" name="destaque" checked={formData.destaque} onChange={(e) => setFormData({...formData, destaque: e.target.checked})} style={{width: 'auto'}}/>
                   <label htmlFor="destaque" style={{color: 'var(--text-main)', cursor: 'pointer'}}>Marcar como Destaque</label>
@@ -248,7 +248,6 @@ function App() {
         ) : (
           <div className="portfolio-content">
             
-            {/* SEÇÃO DE DESTAQUES */}
             {projetosDestaque.length > 0 && (
               <div className="section-destaques" style={{ marginBottom: '4rem' }}>
                 <h2 style={{ color: 'var(--primary)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -260,7 +259,6 @@ function App() {
               </div>
             )}
 
-            {/* SEÇÃO DE OUTROS PROJETOS */}
             {outrosProjetos.length > 0 && (
               <div className="section-outros">
                 <h2 style={{ color: 'var(--text-main)', marginBottom: '1.5rem' }}>
