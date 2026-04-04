@@ -1,13 +1,96 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2, Mail, Star } from 'lucide-react';
 import './App.css';
 
-const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
+// const API_URL = 'https://site-portifolio-2ah7.onrender.com/api/projects';
+
+const MOCK_PROJECTS = [
+  {
+    "id": 2,
+    "title": "IA de reconhecimentos de Placas",
+    "discription": "Modelo de inteligência artificial para o reconhecimento de placas de trânsito. Apesar de ser um projeto simples, tenho relativo apreço por ele já que foi o começo de minha jornada de aprendizado com IA.",
+    "imageURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT-aLm60SbKAH-kvwo73odvjt8uc51hE2537w&s",
+    "projectUrl": "https://colab.research.google.com/drive/1OAvqLaPEo0p28W3NGXqzF41zM2IpRUcx?usp=sharing",
+    "githubUrl": "https://colab.research.google.com/drive/1OAvqLaPEo0p28W3NGXqzF41zM2IpRUcx?usp=sharing",
+    "technologies": "IA, Visão Computacional, Python, Tensorflow, Pandas,  Pytesseract",
+    "destaque": null
+  },
+  {
+    "id": 3,
+    "title": "Este portfólio",
+    "discription": "Projeto de criação deste site, desenvolvi uma aplicação simples com o intuito de armazenar e expor meus projetos que não poderiam ser enviados para o GitHub, como os de IA.",
+    "imageURL": "https://static.vecteezy.com/ti/vetor-gratis/p1/7555824-icone-portfolio-adequado-para-arte-simbolo-longa-sombra-estilo-design-simples-design-editavel-modelo-ilustracao-simples-vetor.jpg",
+    "projectUrl": "",
+    "githubUrl": "https://github.com/MikhaelVinicius/Site_portifolio",
+    "technologies": "Java, JavaScript, React, SpringBoot, PostgreSQL",
+    "destaque": null
+  },
+  {
+    "id": 5,
+    "title": "Extração de dados sobre Cancer de Pele",
+    "discription": "Projeto de aprendizado de maquina que identifica e classifica tipos específicos de câncer de pele e seus resultados foram apresentados em uma apresentação. ",
+    "imageURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQksAKJY--S8F1eEUwB8SBFwyHz8w65Z90hgQ&s",
+    "projectUrl": "https://www.canva.com/design/DAGTftpNM_A/3eNTRiFAvJoR8vphzNzPKw/edit?utm_content=DAGTftpNM_A&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton",
+    "githubUrl": "https://colab.research.google.com/drive/1uD9vdq7Be_wow3X3qDlPT3KFYjJWB2VD?usp=sharing",
+    "technologies": " Python, Tensorflow, Pandas,  Numpy, Seaborn",
+    "destaque": null
+  },
+  {
+    "id": 6,
+    "title": "Diagnóstico de Doenças em Plantas por Imagem",
+    "discription": "(EM DESENVOLVIMENTO)",
+    "imageURL": "https://acientistaagricola.pt/wp-content/uploads/2018/06/manchas-das-folhas.jpg",
+    "projectUrl": "https://colab.research.google.com/drive/1-jgcN4vQcgdlicyD2vl8IMzy7ngdnfYo?usp=sharing",
+    "githubUrl": "https://colab.research.google.com/drive/1-jgcN4vQcgdlicyD2vl8IMzy7ngdnfYo?usp=sharing",
+    "technologies": "Deep Learning, Transfer Learning, . Arquiteturas EfficientNet e ResNet50, TensorFlow",
+    "destaque": null
+  },
+  {
+    "id": 7,
+    "title": "Fuzzy Investimentos ",
+    "discription": "Projeto para aprendizado utiliza lógica fuzzy para transformar 10 indicadores financeiros em uma recomendação clara de investimento. Ele avaliar ativos como Ouro, Euro, Dólar e Real, classificando-os entre Não Recomendado e Recomendado.",
+    "imageURL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqPtGlr08B1cjEpEz8hBZ9u4L2sVK7otrqhg&s",
+    "projectUrl": "https://colab.research.google.com/drive/1-s4c-lPKp4IIpMnyzfsIUTyHfHguzh5D?usp=sharing",
+    "githubUrl": "https://colab.research.google.com/drive/1-s4c-lPKp4IIpMnyzfsIUTyHfHguzh5D?usp=sharing",
+    "technologies": "Python, Scikit-Fuzzy, NumPy, Logíca Fuzzy",
+    "destaque": null
+  },
+  {
+    "id": 8,
+    "title": "Backend Ecommerce Microserviços",
+    "discription": "Este projeto backend de microserviços desenvolvida em Python (FastAPI) utiliza o Docker Compose para orquestrar serviços independentes de Pedidos, Pagamentos e Estoque que se comunicam de forma resiliente via RabbitMQ.",
+    "imageURL": "https://site.alphacode.com.br/wp-content/uploads/2017/05/91993-ecommerce-e-loja-fisica-entenda-quais-sao-as-diferencas.jpg",
+    "projectUrl": "",
+    "githubUrl": "https://github.com/MikhaelVinicius/Ecommerce-microservice.git",
+    "technologies": "Python, Microserviços, FastAPI, Docker, RabbitMQ",
+    "destaque": null
+  },
+  {
+    "id": 4,
+    "title": "Monitor de Segurança com IA",
+    "discription": "Este projeto é um monitor de segurança desenvolvido com Streamlit que utiliza o modelo de inteligência artificial YOLO para realizar a detecção automatizada de Equipamentos de Proteção (EPIs) em imagens. ",
+    "imageURL": "https://mapa-da-obra-producao.s3.amazonaws.com/wp-content/uploads/2018/09/assessoria-de-obras.jpg",
+    "projectUrl": "https://ppp-detector-app.streamlit.app/",
+    "githubUrl": "https://colab.research.google.com/drive/1FfoLlciFfiB9db9zkZomDnDgGTq902lX?usp=sharing",
+    "technologies": "Python, YOLO, Streamilt, roboflow",
+    "destaque": true
+  },
+  {
+    "id": 10,
+    "title": "Visite Arcoverde",
+    "discription": "(Em Finalização) Projeto de desenvolvimento web sobre site de turismo para a cidade de Arcoverde-PE. A aplicação envolve Java Springboot e React. Construção do backend e deploy concluídos. Exige ajustes e finalização de algumas parte do front.",
+    "imageURL": "https://upload.wikimedia.org/wikipedia/commons/4/44/Arcoverde_20230921_130602831.jpg",
+    "projectUrl": "https://arcoverde-site-turismo.vercel.app",
+    "githubUrl": "https://github.com/MikhaelVinicius/Arcoverde_site_turismo",
+    "technologies": "Spring Security com JWT, Spring Data JPA, Arquitetura em Camadas, React.js, Tailwind CSS",
+    "destaque": true
+  }
+];
 
 function App() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState(MOCK_PROJECTS);
+  const [loading, setLoading] = useState(false); // Carregamento desativado
   const [showForm, setShowForm] = useState(false);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -26,6 +109,7 @@ function App() {
     destaque: false
   });
 
+  /* Função original mantida comentada
   const fetchProjects = async () => {
     try {
       const response = await axios.get(API_URL);
@@ -36,9 +120,10 @@ function App() {
       setLoading(false);
     }
   };
+  */
 
   useEffect(() => {
-    fetchProjects();
+    // fetchProjects();
   }, []);
 
   const requireAuth = (action) => {
@@ -71,37 +156,31 @@ function App() {
     setPendingAction(null);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if(window.confirm('Tem certeza que deseja excluir este projeto?')) {
-      try {
-        await axios.delete(`${API_URL}/${id}`);
-        fetchProjects(); 
-      } catch (error) {
-        console.error("Erro ao deletar projeto:", error);
-      }
+      // Atualização apenas no estado local
+      setProjects(projects.filter(p => p.id !== id));
     }
   };
 
-  const handleToggleDestaque = async (project) => {
-    try {
-      const updatedProject = { ...project, destaque: !project.destaque };
-      await axios.put(`${API_URL}/${project.id}`, updatedProject);
-      fetchProjects(); 
-    } catch (error) {
-      console.error("Erro ao atualizar destaque:", error);
-    }
+  const handleToggleDestaque = (project) => {
+    // Atualização apenas no estado local
+    setProjects(projects.map(p => 
+      p.id === project.id ? { ...p, destaque: !p.destaque } : p
+    ));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await axios.post(API_URL, formData);
-      setFormData({ title: '', discription: '', imageURL: '', projectUrl: '', githubUrl: '', technologies: '', destaque: false });
-      setShowForm(false);
-      fetchProjects();
-    } catch (error) {
-      console.error("Erro ao salvar projeto:", error);
-    }
+    // Cria um novo projeto localmente gerando um ID com a data atual
+    const newProject = {
+      ...formData,
+      id: Date.now()
+    };
+    
+    setProjects([...projects, newProject]);
+    setFormData({ title: '', discription: '', imageURL: '', projectUrl: '', githubUrl: '', technologies: '', destaque: false });
+    setShowForm(false);
   };
 
   const handleChange = (e) => {
