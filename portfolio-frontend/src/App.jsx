@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 // import axios from 'axios';
 import { Github, ExternalLink, Code2, PlusCircle, Trash2, Lock, Loader2, Mail, Star } from 'lucide-react';
@@ -85,6 +86,16 @@ const MOCK_PROJECTS = [
     "githubUrl": "https://github.com/MikhaelVinicius/Arcoverde_site_turismo",
     "technologies": "Spring Security com JWT, Spring Data JPA, Arquitetura em Camadas, React.js, Tailwind CSS",
     "destaque": true
+  },
+  {
+    "id": 11,
+    "title": "Streaming de Música",
+    "discription": "Streaming de música 100% funcional, projetado em React, Tailwind, Redux e RapidAPI.",
+    "imageURL": "https://novabrasilfm.com.br/app/uploads/2024/10/streaming_musica.png",
+    "projectUrl": "",
+    "githubUrl": "https://github.com/MikhaelVinicius/StreamingDeMusicaBayonetta.git",
+    "technologies": "React, Tailwind CSS, Redux, RapidAPI",
+    "destaque": null
   }
 ];
 
