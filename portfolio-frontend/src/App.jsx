@@ -4,6 +4,16 @@ import './App.css';
 
 const MOCK_PROJECTS = [
   {
+    "id": 14,
+    "title": "DocuMind — RAG & Busca Semântica",
+    "discription": "Sistema Full-Stack de RAG (Retrieval-Augmented Generation). Permite análise de documentos em PDF via chat em tempo real com rastreabilidade de fontes, conectando LLM a um banco vetorial para precisão sem alucinações.",
+    "imageURL": "https://i0.wp.com/businessaifuture.com/wordpress/wp-content/files/businessaifuture.com/2024/01/RAG-em-IA-Revolucionando-a-Precisao-do-Conteudo-Gerado.webp?fit=1200%2C600&ssl=1",
+    "projectUrl": "",
+    "githubUrl": "https://github.com/MikhaelVinicius/DocuMind",
+    "technologies": "Java 21, Spring Boot, LangChain4j, PostgreSQL (pgvector), React",
+    "destaque": true
+  },
+  {
     "id": 12,
     "title": "SkillSwap",
     "discription": "Plataforma universitária de troca de habilidades por economia de tempo. Implementei algoritmo de match reverso, sistema financeiro de saldo de horas com retenção (escrow), chat contextualizado e assinaturas Premium.",
